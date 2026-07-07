@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "project": "alpha-app",
+  "updated": "2026-01-15T10:05:00",
+  "autonomy": {
+    "mode": "auto",
+    "max_fix_passes": 2,
+    "max_crash_retries": 1,
+    "diagnose_on_failed": true
+  },
+  "missions": {
+    "mission-one": {
+      "title": "Mission One — engine core",
+      "status": "active",
+      "depends_on": [],
+      "owner_surfaces": ["src/**"],
+      "blocked_reason": null,
+      "branch": "mission/mission-one",
+      "claim": {
+        "worker": "executor",
+        "feature": "FEAT-ONE-003",
+        "started_at": "2026-01-15T10:00:00",
+        "session": "fixture-session-1"
+      },
+      "added": "2026-01-10",
+      "activated": "2026-01-12",
+      "concluded": null,
+      "plan_source": "repo:docs/specs/mission-one/plan.md",
+      "pr_url": null,
+      "fix_passes": { "FEAT-ONE-002": 1 },
+      "failed_attempts": { "FEAT-ONE-002": 1 },
+      "crash_retries": { "FEAT-ONE-003": 1 },
+      "blocked_features": { "FEAT-ONE-005": "waiting on upstream API decision" }
+    },
+    "mission-two": {
+      "title": "Mission Two — follow-up polish",
+      "status": "queued",
+      "depends_on": ["mission-one"],
+      "owner_surfaces": ["src/polish/**"],
+      "blocked_reason": "depends on mission-one",
+      "branch": null,
+      "claim": null,
+      "added": "2026-01-14",
+      "activated": null,
+      "concluded": null,
+      "plan_source": null,
+      "pr_url": null
+    }
+  }
+}
