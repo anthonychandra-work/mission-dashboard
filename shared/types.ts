@@ -43,15 +43,18 @@ export interface AutonomyPolicy {
 /**
  * The registry claim object — the only liveness signal (spec §1).
  * `ageMinutes`/`stale` are derived at snapshot time from `startedAt` and the
- * configured staleness threshold (default 45 min).
+ * configured staleness threshold (default 45 min) via the single staleness
+ * rule, `deriveClaimTiming` (FEAT-DASH-005). When `startedAt` is absent or
+ * unparseable the claim is still surfaced but its timing is unknowable —
+ * `ageMinutes`/`stale` are null, never invented values.
  */
 export interface Claim {
   worker: string;
   feature: string | null;
-  startedAt: string;
+  startedAt: string | null;
   session: string | null;
-  ageMinutes: number;
-  stale: boolean;
+  ageMinutes: number | null;
+  stale: boolean | null;
 }
 
 /** Aggregated per-mission feature counts (drives progress bars). */
