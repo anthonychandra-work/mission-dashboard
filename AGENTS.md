@@ -1,0 +1,1 @@
+Before doing anything in this repo, read and follow /Users/Work/Documents/_obsidian/me.md — my global constitution. It routes you to SKILL_MAP.md (what capability to use when) and VAULT_MAP.md (where to look things up) in the same folder.
