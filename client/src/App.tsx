@@ -24,6 +24,9 @@ import { AttentionList } from './components/AttentionList';
 import { ConnectionDot } from './components/ConnectionDot';
 import { HeaderSummary } from './components/HeaderSummary';
 import { InboxPanel } from './components/InboxPanel';
+// FEAT-DASH-012 mission detail (tabs + FeatureTable) mounted into the reserved
+// `#/m/<project>/<mission>` route slot the FEAT-DASH-010 shell carries.
+import { MissionDetail } from './components/MissionDetail';
 import { ProjectSection } from './components/ProjectSection';
 import { useHashRoute } from './lib/useHashRoute';
 import { formatRoute, type Route } from './lib/route';
@@ -110,7 +113,7 @@ function Content({ snapshot, route }: { snapshot: Snapshot | null; route: Route 
     case 'project':
       return <ProjectView snapshot={snapshot} project={route.project} />;
     case 'mission':
-      return <MissionView snapshot={snapshot} project={route.project} mission={route.mission} />;
+      return <MissionView project={route.project} mission={route.mission} />;
     case 'global':
     default:
       return <GlobalView snapshot={snapshot} />;
@@ -165,19 +168,11 @@ function ProjectView({ snapshot, project }: { snapshot: Snapshot; project: strin
 }
 
 /* ---------------------------------------------------------------- *
- *  Mission detail view scaffold
+ *  Mission detail view — FEAT-DASH-012 mounted into the reserved slot.
+ *  Breadcrumb is shell chrome; MissionDetail owns the tabs + FeatureTable
+ *  and reads the live snapshot itself (so the table updates over SSE).
  * ---------------------------------------------------------------- */
-function MissionView({
-  snapshot,
-  project,
-  mission,
-}: {
-  snapshot: Snapshot;
-  project: string;
-  mission: string;
-}): ReactNode {
-  const foundProject = snapshot.projects.find((p) => p.slug === project);
-  const foundMission = foundProject?.missions.find((m) => m.slug === mission);
+function MissionView({ project, mission }: { project: string; mission: string }): ReactNode {
   return (
     <>
       <Breadcrumb
@@ -187,19 +182,7 @@ function MissionView({
           { label: mission },
         ]}
       />
-      {foundMission !== undefined && (
-        <div className="stat-strip">
-          <StatChip label="status" value={foundMission.status} />
-          <StatChip label="features" value={foundMission.featureCounts?.total ?? '—'} />
-          <StatChip label="current" value={foundMission.currentFeature?.name ?? '—'} />
-        </div>
-      )}
-      <Slot
-        span
-        component="MissionDetail · FeatureTable"
-        feature="FEAT-DASH-012"
-        hint={`Tabs (Features · Docs · Issues) load on demand from GET /api/missions/${project}/${mission}.`}
-      />
+      <MissionDetail project={project} mission={mission} />
     </>
   );
 }
@@ -207,48 +190,6 @@ function MissionView({
 /* ---------------------------------------------------------------- *
  *  Shared scaffold pieces
  * ---------------------------------------------------------------- */
-function StatChip({
-  label,
-  value,
-  variant,
-}: {
-  label: string;
-  value: number | string;
-  variant?: 'attention';
-}): ReactNode {
-  return (
-    <div className={`stat-chip${variant === 'attention' ? ' stat-chip--attention' : ''}`}>
-      <span className="stat-chip__value num">{value}</span>
-      <span className="stat-chip__label">{label}</span>
-    </div>
-  );
-}
-
-function Slot({
-  component,
-  feature,
-  hint,
-  span,
-  children,
-}: {
-  component: string;
-  feature: string;
-  hint: string;
-  span?: boolean;
-  children?: ReactNode;
-}): ReactNode {
-  return (
-    <section className={`slot${span ? ' slot--span' : ''}`}>
-      <div className="slot__label">
-        <span>{component}</span>
-        <span className="slot__tag">{feature}</span>
-      </div>
-      <p className="slot__hint">{hint}</p>
-      {children}
-    </section>
-  );
-}
-
 function Breadcrumb({ trail }: { trail: Array<{ label: string; route?: Route }> }): ReactNode {
   return (
     <nav className="scaffold__route" aria-label="Breadcrumb">

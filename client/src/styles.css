@@ -1342,6 +1342,450 @@ a.inbox__target:hover {
 }
 
 /* ============================================================ *
+ *  FEAT-DASH-012 — mission detail (tabs + feature table).
+ *  Appended to the FEAT-DASH-010 token layer + FEAT-DASH-011
+ *  component block above; consumes the same role-named tokens
+ *  and the established .panel / .feat-pill / .pill patterns.
+ * ============================================================ */
+
+/* -- Detail container + header -- */
+.mission-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.mission-detail__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.mission-detail__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mission-detail__title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  color: var(--ink-strong);
+  line-height: var(--leading-tight);
+}
+
+.mission-detail__path {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.mission-detail__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mission-detail__figure {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: var(--text-lg);
+  color: var(--ink-2);
+}
+.mission-detail__figure strong {
+  color: var(--ink-strong);
+  font-weight: var(--weight-semibold);
+}
+.mission-detail__figure-total {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+.mission-detail__figure-label {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+/* -- Tab bar (active = accent underline; ui-ux active-state rule) -- */
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--line-2);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  min-height: 40px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  color: var(--ink-3);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+.tab:hover {
+  color: var(--ink-1);
+}
+.tab--on {
+  color: var(--ink-strong);
+  border-bottom-color: var(--accent);
+}
+
+.tab__badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-inset);
+  color: var(--ink-2);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+.tab__badge--warn {
+  background-color: var(--status-warning-quiet);
+  color: var(--status-warning);
+}
+
+.mission-detail__panel {
+  min-height: 120px;
+}
+
+/* -- Notes / loading / error rows -- */
+.mission-detail__note {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+  padding: var(--space-4) 0;
+}
+.mission-detail__note code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+}
+
+.mission-detail__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) 0;
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+.mission-detail__status--error {
+  color: var(--status-serious);
+}
+
+/* -- Feature table -- */
+.feature-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Status filter chips — double as the table legend */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px var(--space-2) 4px 10px;
+  min-height: 28px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-1);
+  background-color: var(--surface-1);
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+.chip:hover {
+  border-color: var(--line-3);
+  color: var(--ink-1);
+}
+.chip--on {
+  border-color: var(--accent);
+  background-color: var(--accent-quiet);
+  color: var(--ink-strong);
+}
+
+.chip__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  background-color: var(--chip-color, var(--ink-3));
+}
+
+.chip__count {
+  min-width: 18px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-inset);
+  color: var(--ink-2);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.chip--on .chip__count {
+  background-color: color-mix(in srgb, var(--accent) 24%, transparent);
+  color: var(--ink-1);
+}
+
+.chip--vp {
+  --chip-color: var(--feat-validated-passed);
+}
+.chip--vf {
+  --chip-color: var(--feat-validated-failed);
+}
+.chip--ip {
+  --chip-color: var(--feat-in-progress);
+}
+.chip--impl {
+  --chip-color: var(--feat-implemented);
+}
+.chip--iwf {
+  --chip-color: var(--feat-implemented-findings);
+}
+.chip--ready {
+  --chip-color: var(--feat-ready);
+}
+.chip--planned {
+  --chip-color: var(--feat-planned);
+}
+.chip--unknown {
+  --chip-color: var(--feat-unknown);
+}
+
+/* Table shell — horizontal scroll wrapper so wide rows never break the page */
+.feature-table__scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-3);
+  background-color: var(--surface-1);
+}
+
+.ftable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.ftable thead th {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-base);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--surface-2);
+  border-bottom: 1px solid var(--line-2);
+  text-align: left;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.ftable__th-num {
+  text-align: right;
+}
+
+.ftable tbody tr {
+  border-top: 1px solid var(--line-1);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.ftable tbody tr:first-child {
+  border-top: none;
+}
+.ftable__row:hover {
+  background-color: var(--surface-2);
+}
+
+.ftable td,
+.ftable__id {
+  padding: var(--space-2) var(--space-3);
+  vertical-align: middle;
+}
+
+.ftable__id {
+  text-align: left;
+  font-weight: var(--weight-medium);
+  color: var(--ink-1);
+  white-space: nowrap;
+}
+
+.ftable__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ftable__count-zero {
+  color: var(--ink-3);
+  opacity: 0.5;
+}
+.ftable__count-hit {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-1);
+  font-weight: var(--weight-semibold);
+}
+.ftable__count-hit--fix {
+  background-color: var(--status-info-quiet);
+  color: var(--status-info);
+}
+.ftable__count-hit--fail {
+  background-color: var(--status-critical-quiet);
+  color: var(--status-critical);
+}
+.ftable__count-hit--crash {
+  background-color: var(--status-serious-quiet);
+  color: var(--status-serious);
+}
+
+/* Blocked rows: warning tint + left accent + icon + reason (never colour alone) */
+.ftable__row--blocked {
+  background-color: var(--status-warning-quiet);
+  box-shadow: inset 3px 0 0 0 var(--status-warning);
+}
+.ftable__row--blocked:hover {
+  background-color: color-mix(in srgb, var(--status-warning-quiet) 70%, var(--surface-2));
+}
+
+.ftable__blocked-cell {
+  max-width: 320px;
+}
+.ftable__blocked-flag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--status-warning);
+  font-size: var(--text-xs);
+}
+.ftable__blocked-icon {
+  color: var(--status-warning);
+}
+.ftable__dash {
+  color: var(--ink-3);
+  opacity: 0.5;
+}
+
+.ftable__none {
+  padding: var(--space-5) var(--space-3);
+  text-align: center;
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.feature-table__foot {
+  font-size: var(--text-2xs);
+  color: var(--ink-3);
+}
+.feature-table__blocked-tally {
+  color: var(--status-warning);
+}
+
+/* -- Docs / Issues raw-markdown panels -- */
+.doc-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.doc {
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-3);
+  background-color: var(--surface-1);
+  overflow: hidden;
+}
+
+.doc__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--ink-1);
+  user-select: none;
+}
+.doc__summary::-webkit-details-marker {
+  display: none;
+}
+.doc__summary:hover {
+  color: var(--accent-hover);
+}
+
+.doc__summary-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+}
+
+.doc__summary-chevron {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-right: 1.5px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--ink-3);
+  transform: rotate(45deg);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.doc[open] .doc__summary-chevron {
+  transform: rotate(-135deg);
+}
+
+.doc__body {
+  margin: 0;
+  padding: var(--space-4);
+  border-top: 1px solid var(--line-1);
+  background-color: var(--surface-inset);
+  overflow-x: auto;
+  max-height: 60vh;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+
+.doc__body--full {
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-3);
+}
+
+/* ============================================================ *
  *  Reduced motion
  * ============================================================ */
 @media (prefers-reduced-motion: reduce) {
