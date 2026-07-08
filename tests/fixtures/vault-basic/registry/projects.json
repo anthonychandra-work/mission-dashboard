@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "projects": {
+    "alpha-app": {
+      "repo_path": "/tmp/fixture-repos/alpha-app",
+      "default_branch": "main",
+      "registry": "registry/alpha-app.json",
+      "vault_dir": "projects/alpha-app",
+      "last_synced_commit": "abc1234",
+      "created": "2026-01-10"
+    },
+    "legacy-tool": {
+      "repo_path": "/tmp/fixture-repos/legacy-tool",
+      "default_branch": "main",
+      "registry": "registry/legacy-tool.json",
+      "vault_dir": "projects/legacy-tool",
+      "last_synced_commit": null,
+      "created": "2025-12-01"
+    }
+  }
+}

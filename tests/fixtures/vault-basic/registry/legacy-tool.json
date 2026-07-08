@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "project": "legacy-tool",
+  "updated": "2026-01-14T09:00:00",
+  "missions": {
+    "imported-mission": {
+      "title": "Imported mission (no features.json)",
+      "status": "complete",
+      "depends_on": [],
+      "owner_surfaces": [],
+      "blocked_reason": null,
+      "branch": null,
+      "claim": null,
+      "added": "2025-12-01",
+      "activated": "2025-12-01",
+      "concluded": "2025-12-20",
+      "plan_source": null,
+      "pr_url": "https://github.com/example/legacy-tool/pull/7",
+      "summary": "Imported legacy mission — no features.json; rendered from this summary alone."
+    }
+  }
+}

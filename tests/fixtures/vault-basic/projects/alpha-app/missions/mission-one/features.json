@@ -1,0 +1,66 @@
+{
+  "mission": "mission-one",
+  "title": "Mission One — engine core",
+  "status": "active",
+  "milestones": [
+    { "id": "M1", "title": "Core loop", "status": "in-progress" }
+  ],
+  "features": [
+    {
+      "id": "FEAT-ONE-001",
+      "milestone": "M1",
+      "title": "Bootstrap",
+      "status": "validated_passed",
+      "ownerFiles": ["src/bootstrap.ts"],
+      "dependsOn": []
+    },
+    {
+      "id": "FEAT-ONE-002",
+      "milestone": "M1",
+      "title": "Parser",
+      "status": "validated_failed",
+      "ownerFiles": ["src/parser.ts"],
+      "dependsOn": ["FEAT-ONE-001"]
+    },
+    {
+      "id": "FEAT-ONE-003",
+      "milestone": "M1",
+      "title": "Renderer",
+      "status": "in-progress",
+      "ownerFiles": ["src/renderer.ts"],
+      "dependsOn": ["FEAT-ONE-001"]
+    },
+    {
+      "id": "FEAT-ONE-004",
+      "milestone": "M1",
+      "title": "Exporter",
+      "status": "implemented",
+      "ownerFiles": ["src/exporter.ts"],
+      "dependsOn": ["FEAT-ONE-001"]
+    },
+    {
+      "id": "FEAT-ONE-005",
+      "milestone": "M1",
+      "title": "Uplink",
+      "status": "implemented_with_findings",
+      "ownerFiles": ["src/uplink.ts"],
+      "dependsOn": ["FEAT-ONE-002"]
+    },
+    {
+      "id": "FEAT-ONE-006",
+      "milestone": "M1",
+      "title": "Cache",
+      "status": "ready",
+      "ownerFiles": ["src/cache.ts"],
+      "dependsOn": ["FEAT-ONE-001"]
+    },
+    {
+      "id": "FEAT-ONE-007",
+      "milestone": "M1",
+      "title": "Telemetry",
+      "status": "planned",
+      "ownerFiles": ["src/telemetry.ts"],
+      "dependsOn": ["FEAT-ONE-006"]
+    }
+  ]
+}
