@@ -16,8 +16,15 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import type { Mission, Project, Snapshot } from '../../shared/types';
+import type { Snapshot } from '../../shared/types';
 import { EmptyState } from './components/EmptyState';
+// FEAT-DASH-011 global views mounted into the slots the FEAT-DASH-010 shell reserved.
+import { ActivityFeed } from './components/ActivityFeed';
+import { AttentionList } from './components/AttentionList';
+import { ConnectionDot } from './components/ConnectionDot';
+import { HeaderSummary } from './components/HeaderSummary';
+import { InboxPanel } from './components/InboxPanel';
+import { ProjectSection } from './components/ProjectSection';
 import { useHashRoute } from './lib/useHashRoute';
 import { formatRoute, type Route } from './lib/route';
 import { SnapshotProvider, useSnapshot, type SnapshotContextValue } from './lib/useSnapshot';
@@ -76,19 +83,9 @@ function AppBar({
         {snapshot !== null && (
           <span className="app-bar__rev num mono">rev {snapshot.revision}</span>
         )}
-        <ConnStatus status={status} />
+        <ConnectionDot status={status} />
       </div>
     </header>
-  );
-}
-
-function ConnStatus({ status }: { status: SnapshotContextValue['status'] }): ReactNode {
-  const label = status === 'live' ? 'live' : status === 'connecting' ? 'connecting' : 'reconnecting';
-  return (
-    <span className={`conn conn--${status}`} role="status" aria-live="polite">
-      <span className="conn__dot" aria-hidden="true" />
-      {label}
-    </span>
   );
 }
 
@@ -124,29 +121,21 @@ function Content({ snapshot, route }: { snapshot: Snapshot | null; route: Route 
  *  Global view scaffold
  * ---------------------------------------------------------------- */
 function GlobalView({ snapshot }: { snapshot: Snapshot }): ReactNode {
-  const missionCount = snapshot.projects.reduce((sum, p) => sum + p.missions.length, 0);
   return (
     <>
       <Breadcrumb trail={[{ label: 'all projects' }]} />
-
-      <div className="stat-strip">
-        <StatChip label="projects" value={snapshot.projects.length} />
-        <StatChip label="missions" value={missionCount} />
-        <StatChip label="attention" value={snapshot.attention.length} variant="attention" />
-        <StatChip label="unprocessed inbox" value={snapshot.inbox.unprocessedCount} />
-      </div>
-
-      <Slot span component="HeaderSummary" feature="FEAT-DASH-011" hint="Global counts, workers running, and the ‘updated Xs ago’ readout render here." />
-
-      <div className="slot-grid">
-        <Slot component="ProjectSection · MissionCard" feature="FEAT-DASH-011" hint="Per-project mission cards with progress bars and live claim badges.">
-          <MissionPreview projects={snapshot.projects} />
-        </Slot>
-        <div className="slot-stack">
-          <Slot component="AttentionList" feature="FEAT-DASH-011" hint={`${snapshot.attention.length} item(s), sorted warn-before-info.`} />
-          <Slot component="ActivityFeed" feature="FEAT-DASH-011" hint={`${snapshot.activity.length} recent log entr(ies).`} />
-          <Slot component="InboxPanel" feature="FEAT-DASH-011" hint={`${snapshot.inbox.unprocessedCount} unprocessed report(s).`} />
+      <HeaderSummary snapshot={snapshot} />
+      <div className="global-grid">
+        <div className="global-grid__main">
+          {snapshot.projects.map((project) => (
+            <ProjectSection key={project.slug} project={project} />
+          ))}
         </div>
+        <aside className="global-grid__side">
+          <AttentionList attention={snapshot.attention} />
+          <ActivityFeed activity={snapshot.activity} />
+          <InboxPanel inbox={snapshot.inbox} />
+        </aside>
       </div>
     </>
   );
@@ -157,20 +146,18 @@ function GlobalView({ snapshot }: { snapshot: Snapshot }): ReactNode {
  * ---------------------------------------------------------------- */
 function ProjectView({ snapshot, project }: { snapshot: Snapshot; project: string }): ReactNode {
   const found = snapshot.projects.find((p) => p.slug === project);
+  const projectAttention = snapshot.attention.filter((item) => item.project === project);
   return (
     <>
       <Breadcrumb trail={[{ label: 'all projects', route: { name: 'global' } }, { label: project }]} />
       {found === undefined ? (
-        <Slot span component="ProjectSection" feature="FEAT-DASH-011" hint={`No project “${project}” in the current snapshot.`} />
+        <div className="panel">
+          <p className="panel__empty">no project “{project}” in the current snapshot</p>
+        </div>
       ) : (
         <>
-          <div className="stat-strip">
-            <StatChip label="missions" value={found.missions.length} />
-            <StatChip label="branch" value={found.defaultBranch ?? '—'} />
-          </div>
-          <Slot span component="ProjectSection · MissionCard" feature="FEAT-DASH-011" hint="The whole page for a single project renders here.">
-            <MissionPreview projects={[found]} />
-          </Slot>
+          <ProjectSection project={found} standalone />
+          {projectAttention.length > 0 && <AttentionList attention={projectAttention} />}
         </>
       )}
     </>
@@ -260,35 +247,6 @@ function Slot({
       {children}
     </section>
   );
-}
-
-function MissionPreview({ projects }: { projects: Project[] }): ReactNode {
-  const rows: Array<{ project: string; mission: Mission }> = [];
-  for (const project of projects) {
-    for (const mission of project.missions) rows.push({ project: project.slug, mission });
-  }
-  return (
-    <div className="preview">
-      {rows.map(({ project, mission }) => (
-        <div className="preview__row" key={`${project}/${mission.slug}`}>
-          <a href={formatRoute({ name: 'mission', project, mission: mission.slug })} className="preview__name">
-            {mission.title ?? mission.slug}
-          </a>
-          <span className="preview__path mono">
-            {project}/{mission.slug}
-          </span>
-          <span className="preview__spacer" />
-          <StatusPill status={mission.status} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function StatusPill({ status }: { status: string }): ReactNode {
-  const known = ['active', 'queued', 'paused', 'complete'];
-  const kind = known.includes(status) ? status : 'unknown';
-  return <span className={`pill pill--${kind}`}>{status}</span>;
 }
 
 function Breadcrumb({ trail }: { trail: Array<{ label: string; route?: Route }> }): ReactNode {
