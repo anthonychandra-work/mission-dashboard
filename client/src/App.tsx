@@ -16,7 +16,7 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import type { Snapshot } from '../../shared/types';
+import type { Snapshot, SnapshotWarning } from '../../shared/types';
 import { EmptyState } from './components/EmptyState';
 // FEAT-DASH-011 global views mounted into the slots the FEAT-DASH-010 shell reserved.
 import { ActivityFeed } from './components/ActivityFeed';
@@ -83,12 +83,58 @@ function AppBar({
         <span className="app-bar__updated">
           {snapshot === null ? 'awaiting first snapshot' : `updated ${relativeAge(snapshot.generatedAt, now)}`}
         </span>
+        {snapshot !== null && snapshot.warnings.length > 0 && (
+          <WarningsBadge warnings={snapshot.warnings} />
+        )}
         {snapshot !== null && (
           <span className="app-bar__rev num mono">rev {snapshot.revision}</span>
         )}
         <ConnectionDot status={status} />
       </div>
     </header>
+  );
+}
+
+/* ---------------------------------------------------------------- *
+ *  Warnings badge (FEAT-DASH-014 edge-case polish)
+ *
+ *  Surfaces `snapshot.warnings` — non-fatal parse/read problems the
+ *  aggregator tolerates (spec §3.3, §5). A malformed JSON file mid-run keeps
+ *  the last-good data AND raises a `parse_warning`; this badge makes that
+ *  visible in the always-on app-bar chrome (the attention list also mirrors
+ *  it, but the badge is a persistent global signal). The full file+error list
+ *  is exposed as a hover title so the surface stays compact.
+ * ---------------------------------------------------------------- */
+function WarningsBadge({ warnings }: { warnings: SnapshotWarning[] }): ReactNode {
+  const detail = warnings.map((w) => `${w.file}: ${w.error}`).join('\n');
+  return (
+    <span
+      className="app-bar__warnings"
+      data-testid="warnings-badge"
+      role="status"
+      aria-live="polite"
+      title={detail}
+    >
+      <svg
+        className="app-bar__warnings-icon"
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+        <path d="M12 9v4M12 17h.01" />
+      </svg>
+      <span className="app-bar__warnings-count num">{warnings.length}</span>
+      <span className="app-bar__warnings-label">
+        {warnings.length === 1 ? 'warning' : 'warnings'}
+      </span>
+    </span>
   );
 }
 

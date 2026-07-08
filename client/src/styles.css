@@ -270,6 +270,31 @@ a {
   color: var(--ink-2);
 }
 
+/* -- Warnings badge (FEAT-DASH-014 edge-case polish; surfaces snapshot.warnings) -- */
+.app-bar__warnings {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background-color: var(--status-warning-quiet);
+  border: 1px solid color-mix(in srgb, var(--status-warning) 35%, transparent);
+  color: var(--status-warning);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: default;
+}
+.app-bar__warnings-icon {
+  display: block;
+  flex: none;
+}
+.app-bar__warnings-label {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 /* -- Connection status (shell-level minimal; ConnectionDot proper is 011) -- */
 .conn {
   display: inline-flex;

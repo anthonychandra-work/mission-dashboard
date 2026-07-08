@@ -11,7 +11,8 @@
     "dev": "tsx watch server/index.ts & vite",
     "build": "vite build && tsc -p tsconfig.server.json",
     "start": "node dist/server/index.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "chokidar": "^5.0.0",
